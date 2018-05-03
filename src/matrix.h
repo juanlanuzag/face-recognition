@@ -15,7 +15,7 @@ public:
 
     void setElem(int i, int j, double val);
 
-    pair<int, int> dimentions() const;
+    pair<int, int> dimensions() const;
 
     friend Matrix operator*(const Matrix &m1, const Matrix &m2);
 

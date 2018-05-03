@@ -32,15 +32,15 @@ void Matrix::setElem(int i, int j, double val) {
     }
 }
 
-pair<int, int> Matrix::dimentions() const {
+pair<int, int> Matrix::dimensions() const {
     return make_pair(this->n, this->m);
 }
 
 Matrix operator*(const Matrix &m1, const Matrix &m2) {
-    int n_prod = m1.dimentions().first;
-    int m_prod = m2.dimentions().second;
-    int mid_dim = m1.dimentions().second;
-    assert (mid_dim == m2.dimentions().first);
+    int n_prod = m1.dimensions().first;
+    int m_prod = m2.dimensions().second;
+    int mid_dim = m1.dimensions().second;
+    assert (mid_dim == m2.dimensions().first);
 
     Matrix prod(n_prod, m_prod);
     //Itera por las filas de de m1
@@ -61,10 +61,10 @@ Matrix operator*(const Matrix &m1, const Matrix &m2) {
 }
 
 Matrix operator+(const Matrix &a, const Matrix &b) {
-    int n1 = a.dimentions().first;
-    int m1 = a.dimentions().second;
-    int n2 = b.dimentions().first;
-    int m2 = b.dimentions().second;
+    int n1 = a.dimensions().first;
+    int m1 = a.dimensions().second;
+    int n2 = b.dimensions().first;
+    int m2 = b.dimensions().second;
     assert(n1 == n2);
     assert(m1 == m2);
 
@@ -79,11 +79,11 @@ Matrix operator+(const Matrix &a, const Matrix &b) {
 }
 
 Matrix operator-(const Matrix &a, const Matrix &b) {
-    int n1 = a.dimentions().first;
-    int m1 = a.dimentions().second;
+    int n1 = a.dimensions().first;
+    int m1 = a.dimensions().second;
 
-    int n2 = b.dimentions().first;
-    int m2 = b.dimentions().second;
+    int n2 = b.dimensions().first;
+    int m2 = b.dimensions().second;
 
     assert(n1 == n2);
     assert(m1 == m2);
@@ -99,8 +99,8 @@ Matrix operator-(const Matrix &a, const Matrix &b) {
 }
 
 Matrix operator*(double p, const Matrix &m) {
-    int n = m.dimentions().first;
-    int k = m.dimentions().second;
+    int n = m.dimensions().first;
+    int k = m.dimensions().second;
     Matrix prod(n, k);
     //Itero por los elementos distintos de 0
     for (unordered_map<int, unordered_map<int, double> >::const_iterator it = m.matrix.begin();
@@ -115,7 +115,7 @@ Matrix operator*(double p, const Matrix &m) {
 
 vector<double> operator*(const Matrix &a, const vector<double> &x) {
     vector<double> prod(x.size(), 0);
-    for (int i = 0; i < a.dimentions().first; i++) {
+    for (int i = 0; i < a.dimensions().first; i++) {
         for (int j = 0; j < x.size(); j++) {
             prod[i] += a.getElem(i, j) * x[j];
         }
@@ -124,8 +124,8 @@ vector<double> operator*(const Matrix &a, const vector<double> &x) {
 }
 
 ostream &operator<<(ostream &os, const Matrix &matrix) {
-    int n = matrix.dimentions().first;
-    int m = matrix.dimentions().second;
+    int n = matrix.dimensions().first;
+    int m = matrix.dimensions().second;
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
