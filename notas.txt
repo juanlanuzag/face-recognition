@@ -1,0 +1,17 @@
+class Matriz
+
+
+class KNN {
+    k = n_vecinos
+
+    weight = metrica que usa para pesar los votos
+    Matriz X = casos para fitear (#casos x #variables)
+    Matriz Y = clase de los casos en X (#casos x 1)
+
+    predict(x) = clasifica x
+    score(X, Y, metrica=["accuracy", "precision", "recall"...]) = predict para cada x en X y devuelve la metrica
+}
+
+PCA(alfa, X)
+
+reduce(X, step) = subsamplea una imagen
