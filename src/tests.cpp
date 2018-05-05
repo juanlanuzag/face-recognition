@@ -4,6 +4,7 @@
 #include <utility>
 #include <assert.h>
 #include "matrix.h"
+#include "knn.h"
 #include <cmath>
 
 // void powerIterationTest();
