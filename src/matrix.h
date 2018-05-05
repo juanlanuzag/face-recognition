@@ -1,3 +1,6 @@
+#ifndef _MATRIX_H_
+#define _MATRIX_H_
+
 #include <utility>
 #include <vector>
 #include <unordered_map>
@@ -38,3 +41,4 @@ Matrix identity(int n);
 // void normalize(vector<double> &y);
 //
 // double powerIteration(Matrix &a, int maxIterations, vector<double> &y);
+#endif
