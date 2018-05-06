@@ -9,5 +9,6 @@ TP2 Métodos Numéricos DC-UBA
 
 ## Cosas knn
 
-* Así como está hecho en caso de empate elige la clase de menor valor.
+* Así como está hecho en caso de empate elige la clase de menor valor. <-- Cambio: a la hora de calcular la clase me guardo como "representante" de cada clase al elemento más cercano, desempato por ese. Otra opción sería tener la posición promedio de la clase y usar eso, evitaría el caso en que el representante es un outlier.
+
 * En caso de que haya elementos equidistantes elimina el de mayor clase.
