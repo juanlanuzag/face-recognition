@@ -4,14 +4,14 @@
 #include "matrix.h"
 
 class KNN {
+	public:
+		KNN(Matrix& A, vector<int>& y, int n_neigh);
 
-	KNN(Matrix& A, vector<int>& y, int n_neigh);
+		int predict(vector<double>& v);
 
-	int predict(vector<double>& v);
+		double p_predict(vector<double>& v, char metric);
 
-	double p_predict(vector<double>& v, char metric);
-
-	double score(Matrix& A, vector<double>& y, char metric);
+		double score(Matrix& A, vector<double>& y, char metric);
 
 	private:
 		Matrix data;
