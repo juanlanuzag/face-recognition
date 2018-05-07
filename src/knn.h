@@ -9,9 +9,9 @@ class KNN {
 
 		int predict(vector<double>& v);
 
-		double p_predict(vector<double>& v, char metric);
+		double p_predict(vector<double>& v, char metric='a');
 
-		double score(Matrix& A, vector<double>& y, char metric);
+		double score(Matrix& A, vector<int>& y, char metric='a');
 
 	private:
 		Matrix data;

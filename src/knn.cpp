@@ -81,7 +81,7 @@ double euclid_dist(vector<double>& v, vector<double>& w){
 	return sqrt(dist);
 }
 
-double KNN::p_predict(vector<double>& v, char metric = 'a'){
+double KNN::p_predict(vector<double>& v, char metric){
 	/*
 	Devuelve la medida de confianza con la que el clasificador elige la clase.
 
@@ -141,7 +141,7 @@ double KNN::p_predict(vector<double>& v, char metric = 'a'){
 	return (double)max_votes / total_votes;
 }
 
-double KNN::score(Matrix& A, vector<double>& y, char metric = 'a'){
+double KNN::score(Matrix& A, vector<int>& y, char metric){
 	/*
 	Toma un dataset de validacion y calcula el score del modelo en funcion de metric
 

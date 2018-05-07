@@ -31,6 +31,7 @@ int testKNN(){
 	for(int i = 0; i < A.dimensions().first; i++){
 		cout << vec2str(A[i]) << ": " << model.predict(A[i]) << endl; 
 	}
+	cout << "Score para el mismo data set: " << model.score(A,y) << endl;
 	return 0;
 }
 
