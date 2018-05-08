@@ -2,8 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <utility>
-#include <assert.h>
-#include "matrix.h"
+#include "helpers.h"
 #include "knn.h"
 #include <cmath>
 
@@ -11,9 +10,18 @@
 
 using namespace std;
 
+void pcaTest() {
+    Matrix X(100, 100);
+    for (int i = 0; i < 100; ++i) {
+        X[i] = randomVector(100);
+    }
+    Matrix B = pca(X, 10);
+    assert(B.m == 10);
+    cout << B << endl;
+}
 
 int main(int argc, char *argv[]) {
-    // powerIterationTest();
+//    pcaTest();
     return 0;
 }
 

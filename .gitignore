@@ -1,3 +1,5 @@
 *.o
 **/.ipynb_checkpoints/
 src/main
+CMakeLists.txt
+cmake-*
