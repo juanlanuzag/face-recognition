@@ -1,7 +1,7 @@
 CC = g++
 FLAGS = -std=c++11 -ggdb -Wall -O2
 OBJ = matrix.o knn.o helpers.o
-EXECS = tests
+EXECS = main tests
 
 all: $(EXECS)
 

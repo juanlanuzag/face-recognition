@@ -21,7 +21,7 @@ void pcaTest() {
 }
 
 int main(int argc, char *argv[]) {
-//    pcaTest();
+    pcaTest();
     return 0;
 }
 
