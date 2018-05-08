@@ -8,6 +8,10 @@ double powerIteration(Matrix &a, int maxIterations, vector<double> &y);
 
 vector<double> random_vector(int i);
 
-vector<double> deflation(Matrix const &a);
+Matrix deflation(Matrix const &a, int k);
+
+Matrix calculateCovMatrix(Matrix &matrix);
+
+vector<double> calulateMedian(Matrix &matrix);
 
 #endif //PAGERANK_TP_HELPERS_H

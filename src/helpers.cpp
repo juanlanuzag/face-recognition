@@ -1,5 +1,6 @@
 #include "helpers.h"
 
+
 double euclidianNorm(vector<double> &x) {
     double sum = 0;
     for (unsigned int i = 0; i < x.size(); i++) {
@@ -85,19 +86,49 @@ Matrix transposedProduct(vector<double> x) {
     return matrix;
 }
 
-vector<double> deflation(Matrix const &a) {
+Matrix deflation(Matrix const &a, int k) {
     //Supongo que la Matrix es cuadrada y cumple con la condicion
+    Matrix eigenvectors(k, a.m);
     double dominant_eigenvalue;
-    vector<double> y;
     Matrix b = a;
-    vector<double> eigenvalues;
-    for (int i = 0; i < a.n; ++i) {
-        y = random_vector(a.n);
+    Matrix d(a.n, a.m);
+    for (int i = 0; i < k; ++i) {
+        vector<double> y = random_vector(a.n);
         dominant_eigenvalue = powerIteration(b, 1000, y);
-        eigenvalues.push_back(dominant_eigenvalue);
+        eigenvectors[i] = y; // Guardo el autovector asociado al i-esimo autovalor
+        d[i][i] = dominant_eigenvalue;
         Matrix aux = transposedProduct(y);
         aux = dominant_eigenvalue * aux;
         b = b - aux;
     }
-    return eigenvalues;
+    return eigenvectors;
+}
+
+
+Matrix pca(Matrix &a, int alpha) {
+    Matrix covMatrix = calculateCovMatrix(a); //Calculo la Matriz de Covarianza
+    Matrix v = deflation(covMatrix, alpha); // Ya esta transpuesto la matrix de las alpha componentes principales
+    Matrix b1 = a.transpose();
+    b1 = v * b1;
+    Matrix b = b1.transpose(); // Diagonalizo, elijo alpha componentes principales y Cambio de base
+    return b;
+}
+
+Matrix calculateCovMatrix(Matrix &matrix) {
+    vector<double> median = calulateMedian(matrix);
+    Matrix transposed = matrix.transpose();
+    double aux = 1 / (matrix.n - 1);
+    Matrix covMatrix = transposed * matrix;
+    covMatrix = aux * covMatrix;
+    return covMatrix;
+}
+
+vector<double> calulateMedian(Matrix &matrix) {
+    vector<double> median(matrix.m, 0);
+    for (int i = 0; i < matrix.n; ++i) {
+        for (int j = 0; j < matrix.m; ++j) {
+            median[j] += matrix[i][j] / matrix.n;
+        }
+    }
+    return median;
 }

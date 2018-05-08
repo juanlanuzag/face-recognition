@@ -36,9 +36,4 @@ ostream &operator<<(ostream &os, Matrix &matrix);
 
 Matrix identity(int n);
 
-// double euclidianNorm(vector<double> &x);
-//
-// void normalize(vector<double> &y);
-//
-// double powerIteration(Matrix &a, int maxIterations, vector<double> &y);
 #endif
