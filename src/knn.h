@@ -14,8 +14,8 @@ class KNN {
 		double score(Matrix& A, vector<int>& y, char metric='a');
 
 	private:
+		int k;
 		Matrix data;
 		vector<int> tags;
-		int k;
 };
 #endif

@@ -29,7 +29,7 @@ int KNN::predict(vector<double>& img){
 	for(int i = 0; i < this->data.dimensions().first; i++){
 		double tag = this->tags[i];
 		double dist = euclid_dist(img, this->data[i]);
-		if(k_dists.size() < this->k){
+		if((int)k_dists.size() < this->k){
 			k_dists.insert(make_pair(dist, tag));
 			if(votes[tag].first == 0){
 				votes[tag].second = dist;
@@ -97,7 +97,7 @@ double KNN::p_predict(vector<double>& v, char metric){
 	for(int i = 0; i < this->data.dimensions().first; i++){
 		double tag = this->tags[i];
 		double dist = euclid_dist(v, this->data[i]);
-		if(k_dists.size() < this->k){
+		if((int)k_dists.size() < this->k){
 			k_dists.insert(make_pair(dist, tag));
 			if(votes[tag].first == 0){
 				votes[tag].second = dist;
@@ -152,7 +152,7 @@ double KNN::score(Matrix& A, vector<int>& y, char metric){
 			'r' -> recall (hacer)
 			'c' -> callback (hacer)
 	*/
-	assert(A.dimensions().first == y.size());
+	assert(A.dimensions().first == (int)y.size());
 	double res;
 
 	switch(metric){
