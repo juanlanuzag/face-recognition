@@ -1,4 +1,6 @@
 #include <assert.h>
+#include <math.h>       /* sqrt */
+
 #include "helpers.h"
 
 
@@ -29,9 +31,9 @@ double dot_product(vector<double> x, vector<double> &y) {
 
 vector<double> operator*(Matrix &matrix, vector<double> &x) {
     //aca tomo al vector como vector columna
-    assert(matrix.m == x.size());
+    assert(matrix.m == (int)x.size());
     vector<double> prod(matrix.n, 0);
-    for (unsigned int i = 0; i < matrix.n; i++) {
+    for (int i = 0; i < matrix.n; i++) {
         double aux = 0;
         for (int j = 0; j < matrix.m; ++j) {
             aux += matrix[i][j] * x[j];
@@ -43,7 +45,7 @@ vector<double> operator*(Matrix &matrix, vector<double> &x) {
 
 vector<double> operator*(vector<double> &x, Matrix &matrix) {
     //aca tomo al vector como el vector transpuesto
-    assert(x.size() == matrix.n);
+    assert((int)x.size() == matrix.n);
     vector<double> sum(matrix.m);
     for (unsigned int i = 0; i < x.size(); i++) {
         double aux = 0;
@@ -79,8 +81,8 @@ vector<double> randomVector(int i) {
 Matrix transposedProduct(vector<double> x) {
     // Hace v * v^t
     Matrix matrix(x.size(), x.size());
-    for (int i = 0; i < x.size(); ++i) {
-        for (int j = 0; j < x.size(); ++j) {
+    for (unsigned int i = 0; i < x.size(); ++i) {
+        for (unsigned int j = 0; j < x.size(); ++j) {
             matrix[i][j] = x[i] * x[j];
         }
     }

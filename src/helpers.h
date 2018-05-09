@@ -2,7 +2,6 @@
 #define PAGERANK_TP_HELPERS_H
 
 #include "matrix.h"
-#include <assert.h>
 
 Matrix pca(Matrix &a, int alpha);
 
@@ -29,4 +28,3 @@ vector<double> operator*(Matrix &matrix, vector<double> &x);
 vector<double> operator*(vector<double> &x, Matrix &matrix);
 
 #endif //PAGERANK_TP_HELPERS_H
-

@@ -6,7 +6,7 @@ using namespace std;
 
 string vec2str(vector<double> v){
 	string res = "(";
-	for(int i = 1; i < v.size(); i++){
+	for(unsigned int i = 1; i < v.size(); i++){
 		res += to_string(v[i-1]);
 		res += ", ";
 	}
@@ -29,7 +29,7 @@ int testKNN(){
 	KNN model = KNN(A, y, 2);
 
 	for(int i = 0; i < A.dimensions().first; i++){
-		cout << vec2str(A[i]) << ": " << model.predict(A[i]) << endl; 
+		cout << vec2str(A[i]) << ": " << model.predict(A[i]) << endl;
 	}
 	cout << "Score para el mismo data set: " << model.score(A,y) << endl;
 	return 0;

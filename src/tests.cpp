@@ -2,10 +2,11 @@
 #include <fstream>
 #include <vector>
 #include <utility>
+#include <cmath>
+#include <assert.h>
+
 #include "helpers.h"
 #include "knn.h"
-#include <cmath>
-
 // void powerIterationTest();
 
 using namespace std;
