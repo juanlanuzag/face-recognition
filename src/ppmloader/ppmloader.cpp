@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
+
 #include "ppmloader.h"
 
 
@@ -40,7 +42,7 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%i\n", width, height, 65535);
-			pix_size = 3*2; // 6 bytes 
+			pix_size = 3*2; // 6 bytes
 			break;
 		case PPM_LOADER_PIXEL_TYPE_RGB_32B:
 			fprintf(fid, "P6\n");
@@ -49,7 +51,7 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%li\n", width, height, 4294967295);
-			pix_size = 3*4; // 12 bytes 
+			pix_size = 3*4; // 12 bytes
 			break;
 		case PPM_LOADER_PIXEL_TYPE_RGB_64B:
 			fprintf(fid, "P6\n");
@@ -58,9 +60,9 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%li\n", width, height, 18446744073709551615U);
-			pix_size = 3*8; // 24 bytes 
-			break;			
-			
+			pix_size = 3*8; // 24 bytes
+			break;
+
 		case PPM_LOADER_PIXEL_TYPE_GRAY_8B:
 			fprintf(fid, "P5\n");
 			if (comments)
@@ -68,7 +70,7 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%i\n", width, height, 255);
-			pix_size = 1; // 1 bytes 
+			pix_size = 1; // 1 bytes
 			break;
 		case PPM_LOADER_PIXEL_TYPE_GRAY_16B:
 			fprintf(fid, "P5\n");
@@ -77,7 +79,7 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%i\n", width, height, 65535);
-			pix_size = 2; // 2 bytes 
+			pix_size = 2; // 2 bytes
 			break;
 		case PPM_LOADER_PIXEL_TYPE_GRAY_32B:
 			fprintf(fid, "P5\n");
@@ -86,7 +88,7 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%li\n", width, height, 4294967295);
-			pix_size = 4; // 4 bytes 
+			pix_size = 4; // 4 bytes
 			break;
 		case PPM_LOADER_PIXEL_TYPE_GRAY_64B:
 			fprintf(fid, "P5\n");
@@ -95,7 +97,7 @@ bool SavePPMFile(const char *filename, const void *src, int width, int height, P
 				fprintf(fid,"#%s\n",comments);
 			}
 			fprintf(fid, "%i %i\n%li\n", width, height, 18446744073709551615U);
-			pix_size = 8; // 8 bytes 
+			pix_size = 8; // 8 bytes
 			break;
 		case PPM_LOADER_PIXEL_TYPE_INVALID:
 			printf("ERROR invalid PPM_LOADER_PIXEL_TYPE\n");
@@ -177,7 +179,7 @@ bool LoadPPMFile(uchar** data, int *width, int *height, PPM_LOADER_PIXEL_TYPE* p
 		pixel_depth = 4;
 	} else if (channels==3 && levels == 18446744073709551615U) {
 		*pt = PPM_LOADER_PIXEL_TYPE_RGB_64B;
-		pixel_depth = 8;		
+		pixel_depth = 8;
 	}else if (levels == 255) {
 		*pt = PPM_LOADER_PIXEL_TYPE_GRAY_8B;
 		pixel_depth = 1;
@@ -202,4 +204,41 @@ bool LoadPPMFile(uchar** data, int *width, int *height, PPM_LOADER_PIXEL_TYPE* p
 	fclose(fid);
 
 	return true;
+}
+
+
+
+PGMImage::PGMImage()
+	: width(0), height(0), data(NULL), pt(PPM_LOADER_PIXEL_TYPE_INVALID) {};
+
+PGMImage::~PGMImage() {
+	delete [] data;
+	data = NULL;
+}
+
+void PGMImage::load(string filename) {
+
+	bool ret = LoadPPMFile(&data, &width, &height, &pt, filename.c_str());
+    if (!ret || width == 0|| height == 0|| pt!=PPM_LOADER_PIXEL_TYPE_GRAY_8B) {
+      	cerr << "Image Loading failed" << endl;
+    }
+}
+
+
+void PGMImage::save(string filename, string comments) {
+	bool ret = SavePPMFile(filename.c_str(),data,width,height,PPM_LOADER_PIXEL_TYPE_GRAY_8B, comments.c_str());
+	if (!ret) {
+	  cerr << "Image save failed" << endl;
+	}
+}
+
+
+vector<double> PGMImage::data_to_vec() {
+	int len = width * height;
+	vector<double> res(len, 0);
+	for (int i = 0; i < len; i++){
+		double elem = (double)(data[i]);
+		res[i] = elem >= 0 ? elem : 256 + elem;
+    }
+	return res;
 }
