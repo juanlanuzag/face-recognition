@@ -28,10 +28,20 @@ double dot_product(vector<double> x, vector<double> &y) {
     return sum;
 }
 
+vector<double> operator-(vector<double> &x, vector<double> &y) {
+    //aca tomo al vector como vector columna
+    assert(x.size() == y.size());
+    vector<double> res(x.size(), 0);
+    for (unsigned int i = 0; i < x.size(); i++) {
+        res[i] = x[i] - y[i];
+    }
+    return res;
+}
+
 
 vector<double> operator*(Matrix &matrix, vector<double> &x) {
     //aca tomo al vector como vector columna
-    assert(matrix.m == (int)x.size());
+    assert(matrix.m == (int) x.size());
     vector<double> prod(matrix.n, 0);
     for (int i = 0; i < matrix.n; i++) {
         double aux = 0;
@@ -45,7 +55,7 @@ vector<double> operator*(Matrix &matrix, vector<double> &x) {
 
 vector<double> operator*(vector<double> &x, Matrix &matrix) {
     //aca tomo al vector como el vector transpuesto
-    assert((int)x.size() == matrix.n);
+    assert((int) x.size() == matrix.n);
     vector<double> sum(matrix.m);
     for (unsigned int i = 0; i < x.size(); i++) {
         double aux = 0;
@@ -111,6 +121,7 @@ Matrix deflation(Matrix const &a, int k) {
 Matrix pca(Matrix &a, int alpha) {
     Matrix covMatrix = calculateCovMatrix(a); //Calculo la Matriz de Covarianza
     Matrix v = deflation(covMatrix, alpha); // Ya esta transpuesto la matrix de las alpha componentes principales
+    cout << v << endl;
     Matrix x = a.transpose();
     x = v * x;
     Matrix b = x.transpose(); // Diagonalizo, elijo alpha componentes principales y Cambio de base
@@ -118,10 +129,14 @@ Matrix pca(Matrix &a, int alpha) {
 }
 
 Matrix calculateCovMatrix(Matrix &matrix) {
+    Matrix x(matrix.n, matrix.m);
     vector<double> median = calulateMedian(matrix);
-    Matrix transposed = matrix.transpose();
+    for (int i = 0; i < matrix.n; ++i) {
+        x[i] = matrix[i] - median;
+    }
+    Matrix transposed = x.transpose();
     double aux = 1.0 / (matrix.n - 1);
-    Matrix covMatrix = transposed * matrix;
+    Matrix covMatrix = transposed * x;
     covMatrix = aux * covMatrix;
     return covMatrix;
 }
