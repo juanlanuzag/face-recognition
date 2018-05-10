@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
 #include "knn.h"
 #include "matrix.h"
+#include "xval.h"
 
 using namespace std;
 
-string vec2str(vector<double> v){
+template<typename T> string vec2str(vector<T> v){
 	string res = "(";
 	for(unsigned int i = 1; i < v.size(); i++){
 		res += to_string(v[i-1]);
@@ -35,7 +36,41 @@ int testKNN(){
 	return 0;
 }
 
+void testXVal(){
+	vector<int> y {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5};
+	vector<string> A;
+	
+	XVal cv_1 = XVal(3, false, false);
+	XVal cv_2 = XVal(3, true, false);
+	XVal cv_3 = XVal(3, false, true);
+	XVal cv_4 = XVal(3, true, true);
+	
+	cout << "TAGS: " << vec2str(y) << endl;
+
+	cout << "XVal false false: ";
+	for(auto v : cv_1.get_folds(A, y))
+		cout << vec2str(v) << " ";
+	cout << endl;		
+	
+	cout << "XVal true false: ";
+	for(auto v : cv_2.get_folds(A, y))
+		cout << vec2str(v) << " ";
+	cout << endl;		
+	
+	cout << "XVal false true: ";
+	for(auto v : cv_3.get_folds(A, y))
+		cout << vec2str(v) << " ";
+	cout << endl;
+		
+	cout << "XVal true true: ";
+	for(auto v : cv_4.get_folds(A, y))
+		cout << vec2str(v) << " "; 
+	cout << endl;	
+
+}
+
 int main(){
 	testKNN();
+	testXVal();
 	return 0;
 }
