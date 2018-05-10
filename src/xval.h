@@ -7,7 +7,7 @@
 class XVal {
 public:
 	XVal(int n_folds = 3, bool shuffle = false, bool strat = true);
-	void get_folds(Matrix A, vector<int> y, vector<vector<int> >& test_set, vector<vector<int> >& val_set);
+	vector<vector<int> > get_folds(vector<string>& files, vector<int>& y);
 	int get_n();
 private:
 	bool strat;
