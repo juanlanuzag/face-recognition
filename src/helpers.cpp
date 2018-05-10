@@ -121,7 +121,6 @@ Matrix deflation(Matrix const &a, int k) {
 Matrix pca(Matrix &a, int alpha) {
     Matrix covMatrix = calculateCovMatrix(a); //Calculo la Matriz de Covarianza
     Matrix v = deflation(covMatrix, alpha); // Ya esta transpuesto la matrix de las alpha componentes principales
-    cout << v << endl;
     Matrix x = a.transpose();
     x = v * x;
     Matrix b = x.transpose(); // Diagonalizo, elijo alpha componentes principales y Cambio de base
