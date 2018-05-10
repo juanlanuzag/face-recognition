@@ -2,7 +2,7 @@
 
 TP2 Métodos Numéricos DC-UBA
 
-[Informe](https://www.overleaf.com/16138812khstvghvnqjx)
+[Informe](https://www.overleaf.com/16138812khstvghvmqjx)
 
 ## Problemas con dejar vector como Matrix
 
