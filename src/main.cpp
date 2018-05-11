@@ -37,7 +37,7 @@ int testKNN(){
 }
 
 void testXVal(){
-	vector<int> y {1,2,3,4,5,1,2,3,4,5,1,2,3,4,5};
+	vector<int> y {1,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5};
 	vector<string> A;
 	
 	XVal cv_1 = XVal(3, false, false);
