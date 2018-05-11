@@ -42,6 +42,7 @@ vector<vector<int>> XVal::get_folds(vector<string>& files, vector<int>& y){
 		}
 	} else {
 		int i = 0;
+		int r = y.size() % this->n_folds;
 		while(i < idxs.size()){
 			vector<int>fold;
 			for(int j = 0; j < fold_size; j++){
@@ -50,6 +51,11 @@ vector<vector<int>> XVal::get_folds(vector<string>& files, vector<int>& y){
 					i++;
 				}
 			}
+			if(r > 0){
+				fold.push_back(idxs[i]);
+				i++;
+			}
+
 			kfolds.push_back(fold);
 		}	
 

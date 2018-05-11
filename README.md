@@ -2,6 +2,8 @@
 
 TP2 Métodos Numéricos DC-UBA
 
+[Informe](https://www.overleaf.com/16138812khstvghvmqjx)
+
 ## Problemas con dejar vector como Matrix
 
 * Es feo iterar algo que sabes que es un vector, en vez de hacer V[i] tenés que hacer V[0][i].
