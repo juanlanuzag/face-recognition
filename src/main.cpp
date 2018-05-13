@@ -7,6 +7,7 @@
 
 #include "file_helpers.h"
 #include "matrix.h"
+#include "knn.h"
 #include "ppmloader/ppmloader.h"
 
 using namespace std;
@@ -36,16 +37,24 @@ int main(int argc, char *argv[]){
 	unordered_map<string, unsigned int> train_set = dataset_file_to_map(train_set_path);
 	unordered_map<string, unsigned int> test_set = dataset_file_to_map(test_set_path);
 
-	/********* PASO IMAGENES DE ENTRENAMIENTO A UNA MATRIZ *********/
-	Matrix matriz;
-	for(auto it = train_set.begin(); it != train_set.end(); it++) {
-        string filename = it->first;
-		PGMImage img;
-		img.load(filename);
+	/********* PASO IMAGENES DE ENTRENAMIENTO A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
+	Matrix train_matriz;
+	vector<int> train_clasif;
+	data_map_split(train_set, train_matriz, train_clasif);
 
-		matriz.push_row(img.data_to_vec());
-    }
-	cout << matriz.n << " " << matriz.m << endl;
+	/********* PASO IMAGENES DE TEST A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
+	Matrix test_matriz;
+	vector<int> test_clasif;
+	data_map_split(test_set, test_matriz, test_clasif);
+
+	/********* CORRO KNN *********/
+	for (int i = 1; i < 30; i++) {
+		// cout << "Empezando ENTRENAMIENTO para k=" << i << endl;
+		KNN knn(test_matriz, test_clasif, i); // Aca entrena
+		// cout << "ENTRENAMIENTO finalizado" << endl;
+
+		cout << "K=" << i <<" Score: " << knn.score(test_matriz, test_clasif, 'a') << endl;
+	}
 
 
 	return 0;
