@@ -1,11 +1,25 @@
 #include <vector>
-#include "matrix.h"
 #include <cassert>
+#include "matrix.h"
+
 
 double mu = 1e-8;
 
 // Que acceden a estructura interna
 Matrix::Matrix(int n, int m) : n(n), m(m), matrix(vector<vector<double> >(n, vector<double>(m, 0))) {}
+
+Matrix::Matrix() : n(0), m(0) {};
+
+void Matrix::push_row(vector<double> row) {
+    if ( m == 0) {
+        m = (int)row.size();
+    } else {
+        assert(m == (int)row.size());
+    }
+    matrix.push_back(row);
+    n++;
+}
+
 
 pair<int, int> Matrix::dimensions() const {
     return make_pair(this->n, this->m);
@@ -97,4 +111,3 @@ Matrix identity(int n) {
     }
     return id;
 }
-
