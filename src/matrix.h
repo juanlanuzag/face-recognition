@@ -12,6 +12,10 @@ class Matrix {
 public:
     Matrix(int n, int m);
 
+    Matrix();
+
+    void push_row(vector<double> row);
+
     pair<int, int> dimensions() const;
 
     Matrix transpose();
