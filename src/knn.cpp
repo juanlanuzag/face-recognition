@@ -3,8 +3,8 @@
 #include <math.h>
 #include <map>
 #include <set>
+#include "confusionM.h"
 
-//Prototipo de func aux
 double euclid_dist(vector<double>& v, vector<double>& w);
 
 
@@ -24,9 +24,12 @@ int KNN::predict(vector<double>& img){
 		k = cantidad de vecinos con los que se clasifica
 	*/
 	set<pair<double, double> > k_dists;
-	map<double, pair<int, double> > votes;
+	map<double, pair<int, double> > votes; 
 
 	for(int i = 0; i < this->data.dimensions().first; i++){
+	// Invariante: en la iteracion i, k_dists tiene los k puntos de data[0..i]
+	//             más cercanos a img
+
 		double tag = this->tags[i];
 		double dist = euclid_dist(img, this->data[i]);
 		if((int)k_dists.size() < this->k){
@@ -58,7 +61,7 @@ int KNN::predict(vector<double>& img){
 	int max_tag = -1;
 	int max_votes = -1;
 
-	for(auto it : votes){
+	for(auto it : votes){ //Recuento de votos
 		if(it.second.first > max_votes){
 			max_tag = it.first;
 			max_votes = it.second.first;
@@ -84,17 +87,21 @@ double euclid_dist(vector<double>& v, vector<double>& w){
 double KNN::p_predict(vector<double>& v, char metric){
 	/*
 	Devuelve la medida de confianza con la que el clasificador elige la clase.
-
-	v 	= entrada a clasificar
-	metric 	= metodo utilizado para calcular el resultado: (por ahora lo ignora)
-			'a' -> amount, cantidad de votos de la clase ganadora sobre el total
-			'd' -> distancia de la muestra a la clase que que predijo (falta hacer)
+	IN:
+		v 	= entrada a clasificar
+		metric 	= metodo utilizado para calcular el resultado: (por ahora lo ignora)
+				'a' -> amount, cantidad de votos de la clase ganadora sobre el total
+				'd' -> distancia de la muestra a la clase que que predijo (falta hacer)
+	OUT:
+		out = confianza en la clase predecida segun la metrica
 	*/
 
 	set<pair<double, double> > k_dists;
 	map<double, pair<int, double> > votes;
 
 	for(int i = 0; i < this->data.dimensions().first; i++){
+	// Invariante: en la iteracion i, k_dists tiene los k puntos de data[0..i]
+	//             más cercanos a v.
 		double tag = this->tags[i];
 		double dist = euclid_dist(v, this->data[i]);
 		if((int)k_dists.size() < this->k){
@@ -141,38 +148,22 @@ double KNN::p_predict(vector<double>& v, char metric){
 	return (double)max_votes / total_votes;
 }
 
-double KNN::score(Matrix& A, vector<int>& y, char metric){
+ConfusionM KNN::score(Matrix& A, vector<int>& y){
 	/*
 	Toma un dataset de validacion y calcula el score del modelo en funcion de metric
-
-	A 	= matriz donde cada fila es un elemento a clasificar
-	y[i] 	= tag del elemento A[i]
-	metric 	= metrica usada para calcular el score:
-			'a' -> accuracy
-			'r' -> recall (hacer)
-			'c' -> callback (hacer)
+	IN:
+		A 	= matriz donde cada fila es un elemento a clasificar
+		y[i] 	= tag del elemento A[i]
+	OUT:
+		conf = matriz de confusion para el dataset de validacion
 	*/
-	assert(A.dimensions().first == (int)y.size());
-	double res;
+	
+	ConfusionM conf = ConfusionM(y.size());
 
-	switch(metric){
-		case 'a':
-		{
-			double total = y.size();
-			double correct = 0;
-			for(int i = 0; i < A.dimensions().first; i++){
-				int prediction = this->predict(A[i]);
-				if(prediction == y[i]) correct++;
-			}
-			res = correct/total;
-			break;
-		}
-		default:
-		{
-			res = -1;
-			break;
-		}
+	for(int i = 0; i < A.dimensions().first; i++){
+		int prediction = this->predict(A[i]);
+		conf.update(y[i], prediction);
 	}
 
-	return res;
+	return conf;
 }

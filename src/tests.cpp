@@ -9,6 +9,7 @@
 #include "knn.h"
 #include "matrix.h"
 #include "xval.h"
+#include "confusionM.h"
 // void powerIterationTest();
 
 #include <bits/stdc++.h>
@@ -42,7 +43,7 @@ int testKNN(){
 	for(int i = 0; i < A.dimensions().first; i++){
 		cout << vec2str(A[i]) << ": " << model.predict(A[i]) << endl;
 	}
-	cout << "Score para el mismo data set: " << model.score(A,y) << endl;
+	cout << "Score para el mismo data set: " << model.score(A,y).accuracy() << endl;
 	return 0;
 }
 
@@ -79,7 +80,7 @@ void testXVal(){
 
 }
 
-void pcaTest() {
+/*void pcaTest() {
     Matrix X(100, 100);
     for (int i = 0; i < 100; ++i) {
         X[i] = randomVector(100);
@@ -87,15 +88,15 @@ void pcaTest() {
     Matrix B = pca(X, 10);
     assert(B.m == 10);
     cout << B << endl;
-}
+}*/
+
 
 int main(int argc, char *argv[]) {
     testKNN();
     testXVal();
-    pcaTest();
+  //pcaTest();
     return 0;
 }
-
 // void powerIterationTest() {
 //     Matrix a = Matrix(3, 3);
 //     a[0][0] = 1;
