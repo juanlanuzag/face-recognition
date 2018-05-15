@@ -1,6 +1,6 @@
 CC = g++
 FLAGS = -std=c++11 -ggdb -Wall -O2
-OBJ = matrix.o knn.o helpers.o xval.o ppmloader/ppmloader.o file_helpers.o confusionM.o
+OBJ = matrix.o knn.o pca.o xval.o ppmloader/ppmloader.o file_helpers.o confusionM.o
 EXECS = main tests
 
 all: $(EXECS)
