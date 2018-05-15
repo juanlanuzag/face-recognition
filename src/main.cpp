@@ -9,6 +9,7 @@
 #include "matrix.h"
 #include "knn.h"
 #include "ppmloader/ppmloader.h"
+#include "confusionM.h"
 
 using namespace std;
 
@@ -52,10 +53,10 @@ int main(int argc, char *argv[]){
 		// cout << "Empezando ENTRENAMIENTO para k=" << i << endl;
 		KNN knn(test_matriz, test_clasif, i); // Aca entrena
 		// cout << "ENTRENAMIENTO finalizado" << endl;
-
-		cout << "K=" << i <<" Score: " << knn.score(test_matriz, test_clasif, 'a') << endl;
+		
+		cout << "K=" << i <<" Score: " << knn.score(test_matriz, test_clasif).accuracy() << endl;
+//		cout << knn.score(test_matriz, test_clasif) << endl;
 	}
-
 
 	return 0;
 }

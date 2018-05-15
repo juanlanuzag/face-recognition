@@ -2,6 +2,7 @@
 #define _KNN_H_
 
 #include "matrix.h"
+#include "confusionM.h"
 
 class KNN {
 	public:
@@ -11,7 +12,7 @@ class KNN {
 
 		double p_predict(vector<double>& v, char metric='a');
 
-		double score(Matrix& A, vector<int>& y, char metric='a');
+		ConfusionM score(Matrix& A, vector<int>& y);
 
 	private:
 		int k;
