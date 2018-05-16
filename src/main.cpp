@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "assert.h"
+#include <fstream>
 
 #include "file_helpers.h"
 #include "matrix.h"
@@ -17,7 +18,7 @@ int method = -1; //0: kNN, 1: PCA + kNN
 string train_set_path = "";
 string test_set_path = "";
 string clasif_path = "";
-int knn_k;
+int knn_k = 1;
 
 int main(int argc, char *argv[]){
 	// ./main -m 1 -i train.csv -q test.csv -o result.csv
@@ -55,24 +56,28 @@ int main(int argc, char *argv[]){
 	}
 
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
-	unordered_map<string, unsigned int> train_set = dataset_file_to_map(train_set_path);
+	unordered_map<string, unsigned int> train_set = dataset_train_file_to_map(train_set_path);
 	/********* PASO IMAGENES DE ENTRENAMIENTO A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
 	Matrix train_matriz;
 	vector<int> train_clasif;
 	data_map_split(train_set, train_matriz, train_clasif);
 
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
-	unordered_map<string, unsigned int> test_set = dataset_file_to_map(test_set_path);
+	vector<string> test_set = dataset_test_file_to_vector(test_set_path);
 	/********* PASO IMAGENES DE TEST A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
-	Matrix test_matriz;
-	vector<int> test_clasif;
-	data_map_split(test_set, test_matriz, test_clasif);
-
+	vector<vector<double> > test_imgs;
+	for (unsigned int i=0; i < test_set.size(); i++) {
+		test_imgs.push_back(imgvec_from_filepath(test_set[i]));
+	}
 
 	if (method == 0) {
 		// KNN solo
 		KNN knn(train_matriz, train_clasif, knn_k); // Aca entrena
-		cout << "K=" << knn_k <<" Score: " << knn.score(test_matriz, test_clasif).accuracy() << endl;
+		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+		for (unsigned int i=0; i < test_imgs.size(); i++) {
+			fs << knn.predict(test_imgs[i]) << "," << endl;
+		}
+		fs.close();
 	}
 
 	return 0;

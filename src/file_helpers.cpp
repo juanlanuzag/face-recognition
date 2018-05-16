@@ -5,7 +5,7 @@
 #include "file_helpers.h"
 #include "ppmloader/ppmloader.h"
 
-unordered_map<string, unsigned int> dataset_file_to_map(string filename) {
+unordered_map<string, unsigned int> dataset_train_file_to_map(string filename) {
     unordered_map<string, unsigned int> ret;
     std::fstream fs;
     fs.open(filename);
@@ -25,6 +25,24 @@ unordered_map<string, unsigned int> dataset_file_to_map(string filename) {
     fs.close();
     return ret;
 }
+
+vector<string> dataset_test_file_to_vector(string filename) {
+    vector<string> ret;
+    std::fstream fs;
+    fs.open(filename);
+    while ( true ) {
+        string tmp;
+        fs >> tmp;
+        if (!fs.good()){
+            break;
+        }
+        string key = tmp.substr(0, tmp.size()-1);
+        ret.push_back(key);
+    }
+    fs.close();
+    return ret;
+}
+
 
 void data_map_split(unordered_map<string, unsigned int>& mapa, Matrix& matrix, vector<int>& clasif) {
     for(auto it = mapa.begin(); it != mapa.end(); it++) {

@@ -41,6 +41,7 @@ struct PGMImage {
 // Para acceder al pixel i,j , hacer data[i*width + j]
 };
 
+vector<double> imgvec_from_filepath(string file); 
 
 
 bool LoadPPMFile(uchar** data, int *width, int *height, PPM_LOADER_PIXEL_TYPE* pt, const char *filename);

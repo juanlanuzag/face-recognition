@@ -17,6 +17,10 @@ Parametros para correr el comando ./main :
 Para m=0 (KNN):
 
 
+Ejemplo:
+    ./main -m 0 -i ../tests/nuestros/ImagenesCaras80.train -q ../tests/nuestros/ImagenesCaras80.test -o ../tests/nuestros/results
+
+
 -----
 # Datasets
 

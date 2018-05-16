@@ -242,3 +242,9 @@ vector<double> PGMImage::data_to_vec() {
     }
 	return res;
 }
+
+vector<double> imgvec_from_filepath(string file) {
+	PGMImage img;
+	img.load(file);
+	return  img.data_to_vec();
+}
