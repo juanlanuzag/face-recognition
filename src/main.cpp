@@ -9,6 +9,7 @@
 #include "file_helpers.h"
 #include "matrix.h"
 #include "knn.h"
+#include "pca.h"
 #include "ppmloader/ppmloader.h"
 #include "confusionM.h"
 
@@ -19,6 +20,7 @@ string train_set_path = "";
 string test_set_path = "";
 string clasif_path = "";
 int knn_k = 1;
+int alpha = 1;
 
 int main(int argc, char *argv[]){
 	// ./main -m 1 -i train.csv -q test.csv -o result.csv
@@ -35,13 +37,16 @@ int main(int argc, char *argv[]){
 			clasif_path = argv[i+1];
 		} else if(strcmp(argv[i], "-knn-k") == 0) {
 			knn_k = atoi(argv[i+1]);
+		}  else if(strcmp(argv[i], "-alpha") == 0) {
+			alpha = atoi(argv[i+1]);
 		} else if(strcmp(argv[i], "--help") == 0) {
 			cout << "Parametros para correr el comando ./main :" << endl;
 			cout << "-m  Method (0: knn solo)" << endl;
 			cout << "-i  Path al archivo con el train_set" << endl;
 			cout << "-q  Path al archivo con el test_set" << endl;
 			cout << "-o  Path del archivo de salida con la clasificacion de los datos de test_set" << endl;
-
+			cout << "-knn-k indica el k a usar en knn (default 1)" << endl;
+			cout << "-alpha indica el alpha a usar en pca (default 1)" << endl;
 			return 0;
 		}
 	}
@@ -73,6 +78,15 @@ int main(int argc, char *argv[]){
 	if (method == 0) {
 		// KNN solo
 		KNN knn(train_matriz, train_clasif, knn_k); // Aca entrena
+		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+		for (unsigned int i=0; i < test_imgs.size(); i++) {
+			fs << knn.predict(test_imgs[i]) << "," << endl;
+		}
+		fs.close();
+	} else if (method == 1) {
+		// PCA + KNN
+		PCA pca(train_matriz, alpha);
+		KNN knn(pca.fitMatrix, train_clasif, knn_k); // Aca entrena
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
 		for (unsigned int i=0; i < test_imgs.size(); i++) {
 			fs << knn.predict(test_imgs[i]) << "," << endl;
