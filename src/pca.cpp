@@ -3,6 +3,7 @@
 #include <random>
 
 #include "pca.h"
+#include "ppmloader/ppmloader.h"
 
 vector<double> operator-(vector<double> &x, vector<double> &y) {
     //aca tomo al vector como vector columna
@@ -133,7 +134,7 @@ vector<double> calulateMedian(Matrix &matrix) {
 }
 
 PCA::PCA(Matrix &a, int alpha) {
-    Matrix matrixC = calculateRelatedMatrix(a); //Calculo la Matriz Relacionada a la matriz de Covarianza X * X^t
+    Matrix matrixC = calculateRelatedMatrix(a); //Calculo la Matriz Relacionada a la matriz de Covarianza -> X * X^t
     Matrix eigenvectors = deflation(matrixC, alpha); // Diagonalizo, elijo alpha componentes principales y
     Matrix transposed = x.transpose();
 
@@ -142,8 +143,14 @@ PCA::PCA(Matrix &a, int alpha) {
     for (int i = 0; i < alpha; ++i) {
         v[i] = transposed * eigenvectors[i];
     }
-    x = v * transposed;    // Ya esta transpuesto la matrix de las alpha componentes principales
-    fitMatrix = x.transpose();
+
+    //ESTE CODIGO VA EN UN IF de un param
+    for (int i= 0; i< v.n; i++) {
+        save_img_from_vec( "autovect" + to_string(i) + ".pgm", v[i]);
+    }
+    fitMatrix = a.transpose();
+    fitMatrix = v * fitMatrix; // Ya esta transpuesto la matrix de las alpha componentes principales
+    fitMatrix = fitMatrix.transpose();
 }
 
 Matrix PCA::calculateRelatedMatrix(Matrix &matrix) {
@@ -161,6 +168,7 @@ Matrix PCA::calculateRelatedMatrix(Matrix &matrix) {
 }
 
 //Transformacion Caracteriztica de una muestra x
-vector<double> PCA::tc(vector<double> &x) {
-    return v * x;
+vector<double> PCA::tc(vector<double> &y) {
+    return v * y;
 }
+

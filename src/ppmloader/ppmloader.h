@@ -41,6 +41,7 @@ struct PGMImage {
 // Para acceder al pixel i,j , hacer data[i*width + j]
 };
 
+void save_img_from_vec(string filename, vector<double> vec);
 vector<double> imgvec_from_filepath(string file); 
 
 

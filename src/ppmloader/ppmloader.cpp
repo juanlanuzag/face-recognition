@@ -248,3 +248,28 @@ vector<double> imgvec_from_filepath(string file) {
 	img.load(file);
 	return  img.data_to_vec();
 }
+
+void save_img_from_vec(string filename, vector<double> vec) {
+	double max = -1e10;
+	double min = 1e10;
+	for (unsigned int i=0; i < vec.size(); i++) {
+		if (max <= vec[i]) max= vec[i];
+		if (min > vec[i]) min= vec[i];
+	}
+	PGMImage img;
+	img.pt=PPM_LOADER_PIXEL_TYPE_GRAY_8B;
+	img.data = new uchar[vec.size()];
+	for (unsigned int i=0; i < vec.size(); i++) {
+		img.data[i] = (uchar)(255 * (vec[i] - min)/(max - min));
+	}
+	if (vec.size() == 10304 ) {
+		img.width = 92;
+		img.height = 112;
+	} else {
+		img.width = 23;
+		img.height = 28;
+	}
+	img.save(filename, "soy un autovector");
+
+
+}
