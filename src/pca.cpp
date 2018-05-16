@@ -131,13 +131,14 @@ vector<double> calulateMedian(Matrix &matrix) {
     }
     return median;
 }
+
 PCA::PCA(Matrix &a, int alpha) {
     Matrix matrixC = calculateRelatedMatrix(a); //Calculo la Matriz Relacionada a la matriz de Covarianza X * X^t
     Matrix eigenvectors = deflation(matrixC, alpha); // Diagonalizo, elijo alpha componentes principales y
     Matrix transposed = x.transpose();
 
     // Transformo los autovectores de X * X^t a  los de la covarianza
-    Matrix v(alpha, a.m);
+    v =  Matrix(alpha, a.m);
     for (int i = 0; i < alpha; ++i) {
         v[i] = transposed * eigenvectors[i];
     }
@@ -146,16 +147,16 @@ PCA::PCA(Matrix &a, int alpha) {
 }
 
 Matrix PCA::calculateRelatedMatrix(Matrix &matrix) {
-    x =  Matrix(matrix.n, matrix.m);
+    x = Matrix(matrix.n, matrix.m);
     median = calulateMedian(matrix);
     for (int i = 0; i < matrix.n; ++i) {
         x[i] = matrix[i] - median;
     }
 
+    x = 1 / sqrt(matrix.n - 1) * x;
+
     Matrix transposed = x.transpose();
-    double aux = 1.0 / (matrix.n - 1);
     Matrix covMatrix = x * transposed;
-    covMatrix = aux * covMatrix;
     return covMatrix;
 }
 

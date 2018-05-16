@@ -89,7 +89,8 @@ int main(int argc, char *argv[]){
 		KNN knn(pca.fitMatrix, train_clasif, knn_k); // Aca entrena
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
 		for (unsigned int i=0; i < test_imgs.size(); i++) {
-			fs << knn.predict(test_imgs[i]) << "," << endl;
+            auto v = pca.tc(test_imgs[i]);
+            fs << knn.predict(v) << "," << endl;
 		}
 		fs.close();
 	}
