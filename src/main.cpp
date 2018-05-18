@@ -13,7 +13,7 @@
 #include "pca.h"
 #include "ppmloader/ppmloader.h"
 #include "confusionM.h"
-
+#include "xval.h"
 using namespace std;
 
 int method = -1; //0: kNN, 1: PCA + kNN
@@ -22,6 +22,7 @@ string test_set_path = "";
 string clasif_path = "";
 int knn_k = 1;
 int alpha = 1;
+int n_folds = 0;
 
 int main(int argc, char *argv[]){
 	// ./main -m 1 -i train.csv -q test.csv -o result.csv
@@ -40,6 +41,8 @@ int main(int argc, char *argv[]){
 			knn_k = atoi(argv[i+1]);
 		}  else if(strcmp(argv[i], "-alpha") == 0) {
 			alpha = atoi(argv[i+1]);
+		} else if(strcmp(argv[i], "-k-folds") == 0) {
+			n_folds = atoi(argv[i+1]);
 		} else if(strcmp(argv[i], "--help") == 0) {
 			cout << "Parametros para correr el comando ./main :" << endl;
 			cout << "-m  Method (0: knn solo)" << endl;
@@ -48,6 +51,7 @@ int main(int argc, char *argv[]){
 			cout << "-o  Path del archivo de salida con la clasificacion de los datos de test_set" << endl;
 			cout << "-knn-k indica el k a usar en knn (default 1)" << endl;
 			cout << "-alpha indica el alpha a usar en pca (default 1)" << endl;
+			cout << "-k-folds indica la cantidad de folds que se usan para cross validation (default no se usa xval)" << endl; 
 			return 0;
 		}
 	}
@@ -64,9 +68,8 @@ int main(int argc, char *argv[]){
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
 	unordered_map<string, unsigned int> train_set = dataset_train_file_to_map(train_set_path);
 	/********* PASO IMAGENES DE ENTRENAMIENTO A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
-	Matrix train_matriz;
-	vector<int> train_clasif;
-	data_map_split(train_set, train_matriz, train_clasif);
+	Dataset train;	
+	data_map_split(train_set, train.data, train.tags);
 
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
 	vector<string> test_set = dataset_test_file_to_vector(test_set_path);
@@ -78,26 +81,44 @@ int main(int argc, char *argv[]){
 
 	if (method == 0) {
 		// KNN solo
-		KNN knn(train_matriz, train_clasif, knn_k); // Aca entrena
-		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		auto start = std::chrono::high_resolution_clock::now();
+		if(n_folds == 0){	
+			KNN knn(train.data, train.tags, knn_k); // Aca entrena
+			fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+			auto start = std::chrono::high_resolution_clock::now();
 
 
-		for (unsigned int i=0; i < test_imgs.size(); i++) {
-			fs << knn.predict(test_imgs[i]) << "," << endl;
+			for (unsigned int i=0; i < test_imgs.size(); i++) {
+				fs << knn.predict(test_imgs[i]) << "," << endl;
+			}
+			auto end = std::chrono::high_resolution_clock::now();
+			auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+			cout << knn_k << ", " << elapsed.count() << endl;
+			fs.close();
+		} else {
+			/*
+			Dataset t, v;
+			XVal split = XVal(data, n_folds, true, true);
+			int iteration = 0;
+			while(split.generate_data(t, v)){
+				cout << "Fold: " << ++iteration << endl;
+
+				KNN knn(t.data, t.tags, knn_k);
+
+				for(unsigned int i = 0; i < v.tags.size(); i++){
+					cout << knn.predict(t.data[i]) << ", ";	
+				}
+				cout << endl;
+			}
+			*/
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
-		cout << knn_k << ", " << elapsed.count() << endl;
-		fs.close();
 	} else if (method == 1) {
 		// PCA + KNN
-		PCA pca(train_matriz, alpha);
-		KNN knn(pca.fitMatrix, train_clasif, knn_k); // Aca entrena
+		PCA pca(train.data, alpha);
+		KNN knn(pca.fitMatrix, train.tags, knn_k); // Aca entrena
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
 		for (unsigned int i=0; i < test_imgs.size(); i++) {
-            auto v = pca.tc(test_imgs[i]);
-            fs << knn.predict(v) << "," << endl;
+	            auto v = pca.tc(test_imgs[i]);
+        	    fs << knn.predict(v) << "," << endl;
 		}
 		fs.close();
 	}

@@ -13,8 +13,6 @@ class XVal {
 public:
 	XVal(Dataset& data, int n_folds = 3, bool shuffle = false, bool strat = true);
 
-	vector<vector<int> > get_folds();
-
 	int get_n();
 	
 	bool generate_data(Dataset& training, Dataset& validation);
@@ -26,8 +24,9 @@ private:
 
 	Dataset data;
 	vector<vector<int>> folds;
-	vector<int>::iterator train_fold;
-
+	vector<vector<int>>::iterator train_fold;
+	
+	void get_folds();
 	void expand_data(Dataset& d, vector<int>& idxs);
 };
 

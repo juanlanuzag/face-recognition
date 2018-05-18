@@ -80,13 +80,13 @@ bool XVal::generate_data(Dataset& training, Dataset& validation){
 			***testear***
 		}
 	*/	
-	if(this->train_fold == this->folds.end() return false;
+	if(this->train_fold == this->folds.end()) return false;
 
 	Dataset empty;
 	training = empty;
 	validation = empty;
 
-	for(vector<int>::iterator it = this->folds.begin(); it != this->folds.end(); it++){
+	for(vector<vector<int>>::iterator it = this->folds.begin(); it != this->folds.end(); it++){
 		if(it != this->train_fold){
 			expand_data(training, *it);
 		} else {
@@ -97,7 +97,7 @@ bool XVal::generate_data(Dataset& training, Dataset& validation){
 
 void XVal::expand_data(Dataset& d, vector<int>& idxs){
 	for(int idx : idxs){
-		d.data.push_back(this->data.data[idx]);
+		d.data.push_row(this->data.data[idx]);
 		d.tags.push_back(this->data.tags[idx]);
 	}
 }
