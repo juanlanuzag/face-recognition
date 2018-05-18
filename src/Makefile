@@ -11,6 +11,11 @@ main: main.cpp $(OBJ)
 tests: tests.cpp $(OBJ)
 	$(CC) $(FLAGS) $(OBJ) $< -o $@
 
+exp1: #Variando k del knn
+	../tests/experimento1.sh
+
+exp1-tiempo: #Variando k del knn
+	../tests/experimento1-tiempo.sh
 
 %.o: %.cpp %.h
 	$(CC) $(FLAGS) -c $< -o $@

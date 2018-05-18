@@ -2,5 +2,6 @@
 **/.ipynb_checkpoints/
 src/main
 src/tests
-CMakeLists.txt
+src/CMakeLists.txt
 cmake-*
+tests/nuestros/knnsolo*

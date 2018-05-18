@@ -3,6 +3,7 @@
 #include <random>
 
 #include "pca.h"
+#include "ppmloader/ppmloader.h"
 
 vector<double> operator-(vector<double> &x, vector<double> &y) {
     //aca tomo al vector como vector columna
@@ -131,35 +132,43 @@ vector<double> calulateMedian(Matrix &matrix) {
     }
     return median;
 }
+
 PCA::PCA(Matrix &a, int alpha) {
-    Matrix matrixC = calculateRelatedMatrix(a); //Calculo la Matriz Relacionada a la matriz de Covarianza X * X^t
+    Matrix matrixC = calculateRelatedMatrix(a); //Calculo la Matriz Relacionada a la matriz de Covarianza -> X * X^t
     Matrix eigenvectors = deflation(matrixC, alpha); // Diagonalizo, elijo alpha componentes principales y
     Matrix transposed = x.transpose();
 
     // Transformo los autovectores de X * X^t a  los de la covarianza
-    Matrix v(alpha, a.m);
+    v =  Matrix(alpha, a.m);
     for (int i = 0; i < alpha; ++i) {
         v[i] = transposed * eigenvectors[i];
     }
-    x = v * transposed;    // Ya esta transpuesto la matrix de las alpha componentes principales
-    fitMatrix = x.transpose();
+
+    //ESTE CODIGO VA EN UN IF de un param
+    for (int i= 0; i< v.n; i++) {
+        save_img_from_vec( "autovect" + to_string(i) + ".pgm", v[i]);
+    }
+    fitMatrix = a.transpose();
+    fitMatrix = v * fitMatrix; // Ya esta transpuesto la matrix de las alpha componentes principales
+    fitMatrix = fitMatrix.transpose();
 }
 
 Matrix PCA::calculateRelatedMatrix(Matrix &matrix) {
-    x =  Matrix(matrix.n, matrix.m);
+    x = Matrix(matrix.n, matrix.m);
     median = calulateMedian(matrix);
     for (int i = 0; i < matrix.n; ++i) {
         x[i] = matrix[i] - median;
     }
 
+    x = 1 / sqrt(matrix.n - 1) * x;
+
     Matrix transposed = x.transpose();
-    double aux = 1.0 / (matrix.n - 1);
     Matrix covMatrix = x * transposed;
-    covMatrix = aux * covMatrix;
     return covMatrix;
 }
 
 //Transformacion Caracteriztica de una muestra x
-vector<double> PCA::tc(vector<double> &x) {
-    return v * x;
+vector<double> PCA::tc(vector<double> &y) {
+    return v * y;
 }
+
