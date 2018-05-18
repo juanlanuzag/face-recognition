@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "assert.h"
 #include <fstream>
+#include <chrono>
 
 #include "file_helpers.h"
 #include "matrix.h"
@@ -79,9 +80,15 @@ int main(int argc, char *argv[]){
 		// KNN solo
 		KNN knn(train_matriz, train_clasif, knn_k); // Aca entrena
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+		auto start = std::chrono::high_resolution_clock::now();
+
+
 		for (unsigned int i=0; i < test_imgs.size(); i++) {
 			fs << knn.predict(test_imgs[i]) << "," << endl;
 		}
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+		cout << knn_k << ", " << elapsed.count() << endl;
 		fs.close();
 	} else if (method == 1) {
 		// PCA + KNN
