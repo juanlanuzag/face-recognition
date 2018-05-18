@@ -4,3 +4,4 @@ src/main
 src/tests
 src/CMakeLists.txt
 cmake-*
+tests/nuestros/knnsolo*

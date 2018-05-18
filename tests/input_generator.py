@@ -43,14 +43,19 @@ def traindf_to_csv(df, path):
                 archivo.write(elem + ', ' + colname_to_int(key) + ',\n')
 
 
-def testdf_to_csv(df, path):
-    with open(path, 'w') as archivo:
+def testdf_to_csv(df, pathtest, pathexpected):
+    with open(pathtest, 'w') as archivo:
         for key, col in df.iteritems():
             for index, elem in col.iteritems():
                 archivo.write(elem + ',\n')
+    with open(pathexpected, 'w') as archivo:
+        for key, col in df.iteritems():
+            for index, elem in col.iteritems():
+                archivo.write(colname_to_int(key) + ',\n')
 
 
 # Main
 (train_df, test_df) = split_dataset('../assets/ImagenesCaras', 0.8)
 traindf_to_csv(train_df, 'nuestros/ImagenesCaras80.train')
-testdf_to_csv(test_df, 'nuestros/ImagenesCaras80.test')
+testdf_to_csv(test_df, 'nuestros/ImagenesCaras80.test',
+              'nuestros/ImagenesCaras80.expected')
