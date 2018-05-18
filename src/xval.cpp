@@ -7,15 +7,19 @@
 
 using namespace std;
 
-XVal::XVal(int n_folds, bool shuffle, bool strat): n_folds(n_folds), shuffle(shuffle), strat(strat){}
+XVal::XVal(Dataset& data, int n_folds, bool shuffle, bool strat): data(data), n_folds(n_folds), shuffle(shuffle), strat(strat){
+	this->get_folds();
+}
 
 int XVal::get_n(){ return this->n_folds; }
 
-vector<vector<int>> XVal::get_folds(vector<string>& files, vector<int>& y){
+void XVal::get_folds(){
+	//Computa y setea los folds de la estructura, setea train_fold
+
+	vector<int> y = this->data.tags;
 	int fold_size = y.size() / this->n_folds;
 	
 	vector<int> idxs;
-	vector<vector<int>> kfolds;
 
 	for(int i = 0; i < y.size(); i++){
 		idxs.push_back(i);
@@ -32,11 +36,11 @@ vector<vector<int>> XVal::get_folds(vector<string>& files, vector<int>& y){
 			class_bucket[y[idx]].push_back(idx);
 		}
 
-		kfolds = vector<vector<int>>(this->n_folds, vector<int>());
+		this->folds = vector<vector<int>>(this->n_folds, vector<int>());
 		int cur_fold = 0;
 		for(auto bucket : class_bucket){
 			for(auto idx : bucket.second){
-				kfolds[cur_fold].push_back(idx);
+				this->folds[cur_fold].push_back(idx);
 				cur_fold = (cur_fold + 1) % this->n_folds;
 			}
 		}
@@ -56,10 +60,44 @@ vector<vector<int>> XVal::get_folds(vector<string>& files, vector<int>& y){
 				i++;
 			}
 
-			kfolds.push_back(fold);
+			this->folds.push_back(fold);
 		}	
+	}
+	this->train_fold = this->folds.begin();
+}
 
-	}	
+bool XVal::generate_data(Dataset& training, Dataset& validation){
+	/*
+	Genera el siguiente dataset para el modelo.
+	IN:
+		training -> donde se guardan los datos de training
+		validation -> donde se guardan los datos de validacion
+	OUT:
+		false <==> ya se usaron todas las combinaciones de training/validation
+	
+	Idea de uso:
+		while(generate_data(training, validation)){
+			***testear***
+		}
+	*/	
+	if(this->train_fold == this->folds.end() return false;
 
-	return kfolds; 
+	Dataset empty;
+	training = empty;
+	validation = empty;
+
+	for(vector<int>::iterator it = this->folds.begin(); it != this->folds.end(); it++){
+		if(it != this->train_fold){
+			expand_data(training, *it);
+		} else {
+			expand_data(validation, *it);
+		}
+	}
+}
+
+void XVal::expand_data(Dataset& d, vector<int>& idxs){
+	for(int idx : idxs){
+		d.data.push_back(this->data.data[idx]);
+		d.tags.push_back(this->data.tags[idx]);
+	}
 }
