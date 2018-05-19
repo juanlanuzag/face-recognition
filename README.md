@@ -31,7 +31,7 @@ Todo dataset tiene que estar en su propio directorio dentro de assets/, y adentr
 -----
 # Mediciones para metodos 2 y 3
 
-Si se corre el main con -m 2 o -m3 se generan dos archivos.
+Si se corre el main con -m 2 o -m 3 se generan dos archivos (ignora por completo el parámetro -q).
 
 * El primero es el que le pasas por parámetro en -o y tiene un csv con los siguientes datos:
 
