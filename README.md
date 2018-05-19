@@ -29,6 +29,38 @@ Todo dataset tiene que estar en su propio directorio dentro de assets/, y adentr
  NO TOCAR los datasets ImagenesCaras e ImagenesCarasRed provistos por la catedra.
 
 -----
+# Mediciones para metodos 2 y 3
+
+Si se corre el main con -m 2 o -m3 se generan dos archivos.
+
+* El primero es el que le pasas por parámetro en -o y tiene un csv con los siguientes datos:
+
+|method|train_set|knn-k|k-folds|alpha(solo para metodo 3)|test_fold|accuracy|
+|:---: |:-------:|:---:|:-----:|:-----------------------:|:-------:|:------:|
+
+* El segundo es el path de -o más la extensión .conf que tiene para cada fold su matriz de confusión el formato es:
+
+1: #filas_matriz_confusion #folds
+
+2: Matriz de confusion para fold1
+
+...
+
+n: Matriz de confusion para fold2
+
+...
+
+etc
+
+
+
+* En **tests/utils.py** hay 2 funciones que se usan para cada uno de los archivos:
+
+* generateConfM(path) le pasas el path al archivo .conf y te devuelve una lista de matrices de confusion. A cada matriz de confusion le podes pedir accuracy, precision, recall o f1 (los ultimos 4 les tenes que dar la clase positiva)
+
+* loadStats(path) toma el output -o del main y lo carga en un dataframe de pandas.
+
+-----
 ## Problemas con dejar vector como Matrix
 
 * Es feo iterar algo que sabes que es un vector, en vez de hacer V[i] tenés que hacer V[0][i].
