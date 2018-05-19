@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include "confusionM.h"
+#include <algorithm> 
 
 double euclid_dist(vector<double>& v, vector<double>& w);
 
@@ -157,8 +158,8 @@ ConfusionM KNN::score(Matrix& A, vector<int>& y){
 	OUT:
 		conf = matriz de confusion para el dataset de validacion
 	*/
-	
-	ConfusionM conf = ConfusionM(y.size());
+	int max_tag = *max_element(y.begin(), y.end());	
+	ConfusionM conf = ConfusionM(max_tag);
 
 	for(int i = 0; i < A.dimensions().first; i++){
 		int prediction = this->predict(A[i]);
