@@ -4,6 +4,8 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
+#include <iterator>
 
 using namespace std;
 
@@ -12,6 +14,8 @@ XVal::XVal(Dataset& data, int n_folds, bool shuffle, bool strat): data(data), n_
 }
 
 int XVal::get_n(){ return this->n_folds; }
+
+Dataset XVal:: get_data(){ return this->data; }
 
 void XVal::get_folds(){
 	//Computa y setea los folds de la estructura, setea train_fold
@@ -80,8 +84,10 @@ bool XVal::generate_data(Dataset& training, Dataset& validation){
 			***testear***
 		}
 	*/	
-	if(this->train_fold == this->folds.end()) return false;
-
+	if(this->train_fold == this->folds.end()) {
+		cout << "FINAL" << endl;
+		return false;
+	}
 	Dataset empty;
 	training = empty;
 	validation = empty;
@@ -93,6 +99,7 @@ bool XVal::generate_data(Dataset& training, Dataset& validation){
 			expand_data(validation, *it);
 		}
 	}
+	cout << (++this->train_fold != this->folds.end()) << endl;
 }
 
 void XVal::expand_data(Dataset& d, vector<int>& idxs){

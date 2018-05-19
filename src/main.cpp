@@ -64,6 +64,9 @@ int main(int argc, char *argv[]){
 		cout << "Para el metodo knn se debe pasar tanto archivo de train como de test" << endl;
 		return -1;
 	}
+	if ((method == 2 || method == 3) && (n_folds < 2 || n_folds > train_set_path.size())) {
+		cout << "Mala cantidad de folds (debe ser 2 < n_folds < size(dataset)" << endl;
+	}
 
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
 	unordered_map<string, unsigned int> train_set = dataset_train_file_to_map(train_set_path);
@@ -81,36 +84,18 @@ int main(int argc, char *argv[]){
 
 	if (method == 0) {
 		// KNN solo
-		if(n_folds == 0){	
-			KNN knn(train.data, train.tags, knn_k); // Aca entrena
-			fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-			auto start = std::chrono::high_resolution_clock::now();
+		KNN knn(train.data, train.tags, knn_k); // Aca entrena
+		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+		auto start = std::chrono::high_resolution_clock::now();
 
 
-			for (unsigned int i=0; i < test_imgs.size(); i++) {
-				fs << knn.predict(test_imgs[i]) << "," << endl;
-			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
-			cout << knn_k << ", " << elapsed.count() << endl;
-			fs.close();
-		} else {
-			/*
-			Dataset t, v;
-			XVal split = XVal(data, n_folds, true, true);
-			int iteration = 0;
-			while(split.generate_data(t, v)){
-				cout << "Fold: " << ++iteration << endl;
-
-				KNN knn(t.data, t.tags, knn_k);
-
-				for(unsigned int i = 0; i < v.tags.size(); i++){
-					cout << knn.predict(t.data[i]) << ", ";	
-				}
-				cout << endl;
-			}
-			*/
+		for (unsigned int i=0; i < test_imgs.size(); i++) {
+			fs << knn.predict(test_imgs[i]) << "," << endl;
 		}
+		auto end = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+		cout << knn_k << ", " << elapsed.count() << endl;
+		fs.close();
 	} else if (method == 1) {
 		// PCA + KNN
 		PCA pca(train.data, alpha);
@@ -121,7 +106,53 @@ int main(int argc, char *argv[]){
         	    fs << knn.predict(v) << "," << endl;
 		}
 		fs.close();
-	}
+	} else if (method == 2) {
+		Dataset t,v;
 
+		XVal split = XVal(train, n_folds, true, true);
+
+		int iteration = 0;
+
+		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+		fs << "method,train_set,knn-k,k-folds,test_fold,acccuracy," << endl;
+
+		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
+		fs2 << train.tags.size() << " " << n_folds << endl; 
+		
+		while(split.generate_data(t, v)){
+			KNN knn(t.data, t.tags, knn_k);
+			ConfusionM c = knn.score(v.data, v.tags);
+			fs2 << c << endl;
+			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << iteration++ << "," << c.accuracy() << "," << endl;     
+		}
+	} else if (method == 3){
+		Dataset t,v;
+		XVal split = XVal(train, n_folds, true, true);
+
+		int iteration = 0;
+
+		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
+		fs << "method,train_set,knn-k,k-folds,alpha,test_fold,acccuracy," << endl;
+
+		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
+		fs2 << train.tags.size() << " " << n_folds << endl; 
+		
+		while(split.generate_data(t, v)){
+			PCA pca(t.data, alpha);
+			KNN knn(pca.fitMatrix, t.tags, knn_k);
+			
+			Matrix transformed_v_data;
+			for(unsigned int i = 0; i < v.data.n; i++){
+				auto vec = pca.tc(v.data[i]);
+				transformed_v_data.push_row(vec);
+			}
+			cout << transformed_v_data.dimensions().first << "," << transformed_v_data.dimensions().second << endl;
+			ConfusionM c = knn.score(transformed_v_data, v.tags);
+			
+			fs2 << c << endl;
+			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << alpha << "," << iteration++ << "," << c.accuracy() << "," << endl;     
+		}
+		
+	}
 	return 0;
 }

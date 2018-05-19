@@ -14,6 +14,8 @@ public:
 	XVal(Dataset& data, int n_folds = 3, bool shuffle = false, bool strat = true);
 
 	int get_n();
+
+	Dataset get_data();
 	
 	bool generate_data(Dataset& training, Dataset& validation);
 

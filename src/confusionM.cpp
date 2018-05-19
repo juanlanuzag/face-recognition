@@ -8,7 +8,7 @@ using namespace std;
 ConfusionM::ConfusionM(int size): conf(vector<vector<int>>(size, vector<int>(size, 0))), total(0) {};
 
 void ConfusionM::update(int actual, int predicted){
-	this->conf[actual][predicted]++;
+	this->conf[actual-1][predicted-1]++;
 	this->total++;
 }
 
