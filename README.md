@@ -38,7 +38,7 @@ Si se corre el main con -m 2 o -m 3 se generan dos archivos (ignora por completo
 |method|train_set|knn-k|k-folds|alpha(solo para metodo 3)|test_fold|accuracy|
 |:---: |:-------:|:---:|:-----:|:-----------------------:|:-------:|:------:|
 
-* El segundo es el path de -o más la extensión .conf que tiene para cada fold su matriz de confusión el formato es:
+* El segundo es el path de -o más la extensión .conf que tiene para cada fold su matriz de confusión. El formato del archivo es:
 
 1: #filas_matriz_confusion #folds
 
