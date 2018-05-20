@@ -27,7 +27,7 @@ def generateConfM(path):
 class ConfusionM:
 
     def __init__(self, n=0, matrix=[]):
-        print(len(matrix), len(matrix[len(matrix)-1]))
+        # print(len(matrix), len(matrix[len(matrix)-1]))
         if matrix != []:
             self.matrix = np.array(matrix)
             self.total = sum([x for x in np.nditer(self.matrix)])
