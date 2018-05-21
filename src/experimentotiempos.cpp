@@ -84,19 +84,21 @@ int main(int argc, char *argv[]){
 	}
 
 	if (method == 0) {
-		// KNN solo
-		KNN knn(train.data, train.tags, knn_k); // Aca entrena
-		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		auto start = std::chrono::high_resolution_clock::now();
+        KNN knn(train.data, train.tags, knn_k); // Aca entrena
+        double totalTimeElapsed = 0;
 
+        for (int t = 0; t < 10; t++) {
+            auto start = std::chrono::high_resolution_clock::now();
+            for (unsigned int i=0; i < test_imgs.size(); i++) {
+                knn.predict(test_imgs[i]);
+            }
+            auto end = std::chrono::high_resolution_clock::now();
+            auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+            totalTimeElapsed += elapsed.count();
+        }
 
-		for (unsigned int i=0; i < test_imgs.size(); i++) {
-			fs << knn.predict(test_imgs[i]) << "," << endl;
-		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
-		cout << knn_k << ", " << elapsed.count() << endl;
-		fs.close();
+        cout << totalTimeElapsed / 10 << endl;
+
 	} else if (method == 1) {
 		// PCA + KNN
 		PCA pca(train.data, alpha);
