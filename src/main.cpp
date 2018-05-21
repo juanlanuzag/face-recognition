@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
 			cout << "-o  Path del archivo de salida con la clasificacion de los datos de test_set" << endl;
 			cout << "-knn-k indica el k a usar en knn (default 1)" << endl;
 			cout << "-alpha indica el alpha a usar en pca (default 1)" << endl;
-			cout << "-k-folds indica la cantidad de folds que se usan para cross validation (default no se usa xval)" << endl; 
+			cout << "-k-folds indica la cantidad de folds que se usan para cross validation (default no se usa xval)" << endl;
 			return 0;
 		}
 	}
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
 	unordered_map<string, unsigned int> train_set = dataset_train_file_to_map(train_set_path);
 	/********* PASO IMAGENES DE ENTRENAMIENTO A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
-	Dataset train;	
+	Dataset train;
 	data_map_split(train_set, train.data, train.tags);
 
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
@@ -118,13 +118,13 @@ int main(int argc, char *argv[]){
 		fs << "method,train_set,knn-k,k-folds,test_fold,acccuracy" << endl;
 
 		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
-		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl; 
-		
+		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl;
+
 		while(split.generate_data(t, v)){
 			KNN knn(t.data, t.tags, knn_k);
 			ConfusionM c = knn.score(v.data, v.tags);
 			fs2 << c << endl;
-			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << iteration++ << "," << c.accuracy() << endl;     
+			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << iteration++ << "," << c.accuracy() << endl;
 		}
 	} else if (method == 3){
 		Dataset t,v;
@@ -136,23 +136,23 @@ int main(int argc, char *argv[]){
 		fs << "method,train_set,knn-k,k-folds,alpha,test_fold,acccuracy" << endl;
 
 		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
-		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl; 
-		
+		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl;
+
 		while(split.generate_data(t, v)){
 			PCA pca(t.data, alpha);
 			KNN knn(pca.fitMatrix, t.tags, knn_k);
-			
+
 			Matrix transformed_v_data;
 			for(unsigned int i = 0; i < v.data.n; i++){
 				auto vec = pca.tc(v.data[i]);
 				transformed_v_data.push_row(vec);
 			}
 			ConfusionM c = knn.score(transformed_v_data, v.tags);
-			
+
 			fs2 << c << endl;
-			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << alpha << "," << iteration++ << "," << c.accuracy() << endl;     
+			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << alpha << "," << iteration++ << "," << c.accuracy() << endl;
 		}
-		
+
 	}
 	return 0;
 }
