@@ -24,6 +24,7 @@ string clasif_path = "";
 int knn_k = 1;
 int alpha = 1;
 int n_folds = 0;
+bool strat = true;
 
 int main(int argc, char *argv[]){
 	// ./main -m 1 -i train.csv -q test.csv -o result.csv
@@ -44,6 +45,8 @@ int main(int argc, char *argv[]){
 			alpha = atoi(argv[i+1]);
 		} else if(strcmp(argv[i], "-k-folds") == 0) {
 			n_folds = atoi(argv[i+1]);
+		} else if (strcmp(argv[i], "-strat") == 0){
+			strat = atoi(argv[i+1]);
 		} else if(strcmp(argv[i], "--help") == 0) {
 			cout << "Parametros para correr el comando ./main :" << endl;
 			cout << "-m  Method (0: knn solo)" << endl;
@@ -110,7 +113,7 @@ int main(int argc, char *argv[]){
 	} else if (method == 2) {
 		Dataset t,v;
 
-		XVal split = XVal(train, n_folds, true, true);
+		XVal split = XVal(train, n_folds, true, strat);
 
 		int iteration = 0;
 
@@ -128,12 +131,12 @@ int main(int argc, char *argv[]){
 		}
 	} else if (method == 3){
 		Dataset t,v;
-		XVal split = XVal(train, n_folds, true, true);
+		XVal split = XVal(train, n_folds, true, strat);
 
 		int iteration = 0;
 
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		fs << "method,train_set,knn-k,k-folds,alpha,test_fold,acccuracy" << endl;
+		fs << "method,train_set,knn-k,k-folds,alpha,test_fold,accuracy" << endl;
 
 		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
 		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl;
