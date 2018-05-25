@@ -55,7 +55,9 @@ def testdf_to_csv(df, pathtest, pathexpected):
 
 
 # Main
-(train_df, test_df) = split_dataset('../assets/ImagenesCaras', 0.8)
-traindf_to_csv(train_df, 'nuestros/ImagenesCaras80.train')
-testdf_to_csv(test_df, 'nuestros/ImagenesCaras80.test',
-              'nuestros/ImagenesCaras80.expected')
+carpetas = ['ImagenesCaras', 'ImagenesX2', 'ImagenesX5', 'ImagenesX7', 'ImagenesX10']
+for carpeta in carpetas:
+    (train_df, test_df) = split_dataset('../assets/{}'.format(carpeta), 0.8)
+    traindf_to_csv(train_df, 'nuestros/{}80.train'.format(carpeta))
+    testdf_to_csv(test_df, 'nuestros/{}80.test'.format(carpeta),
+                  'nuestros/{}80.expected'.format(carpeta))
