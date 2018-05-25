@@ -176,7 +176,7 @@ Matrix PCA::calculateRelatedMatrix(Matrix &matrix) {
     return covMatrix;
 }
 
-//Transformacion Caracteriztica de una muestra x
+//Transformacion Caracteristica de una muestra x
 vector<double> PCA::tc(vector<double> &y) {
     return v * y;
 }
