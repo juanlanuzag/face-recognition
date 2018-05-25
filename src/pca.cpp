@@ -74,24 +74,23 @@ double dot_product(vector<double> x, vector<double> &y) {
 
 //Calcula el autovalor maximo y su autovector asociado
 double powerIteration(Matrix &a, int maxIterations, vector<double> &y) {
-    // supongo que y esta bien elegido (si es random hay menos chances de que no converga la funcion)
     double res = 0;
 
-    if (printEigenvalues) cout << "Calculando : " << endl;
+    if (printEigenvalues) cout << "Calculando : " << endl; // Para un test
     for (int i = 0; i < maxIterations; i++) {
         y = a * y;
         normalize(y); // normaliza por la norma euclida
         auto aux = a * y;
         res = dot_product(y, aux) / dot_product(y, y);
-        if (printEigenvalues) cout << res << endl;
+
+        if (printEigenvalues) cout << res << endl;// Para un test
     }
 
     return res;
 }
 
 vector<double> randomVector(int i) {
-    vector<double> vector(i, 0);
-    random_device rd;
+    vector<double> vector(i, 0);    random_device rd;
     mt19937 mt(rd());
     uniform_real_distribution<double> dist(-10.0, 10.0);
     for (int j = 0; j < i; ++j) {
@@ -152,9 +151,9 @@ PCA::PCA(Matrix &a, int alpha) {
         v[i] = transposed * eigenvectors[i];
     }
 
-    //ESTE CODIGO VA EN UN IF de un param
     if (saveEigenvector) {
         for (int i = 0; i < v.n; i++) {
+            // Guardo los autovectores como imagenes
             save_img_from_vec("autovect" + to_string(i) + ".pgm", v[i]);
         }
     }
