@@ -5,6 +5,10 @@
 #include "pca.h"
 #include "ppmloader/ppmloader.h"
 
+int maxIterations = 1000;
+bool printEigenvalues = false;
+bool saveEigenvector = false;
+
 vector<double> operator-(vector<double> &x, vector<double> &y) {
     //aca tomo al vector como vector columna
     assert(x.size() == y.size());
@@ -72,12 +76,16 @@ double dot_product(vector<double> x, vector<double> &y) {
 double powerIteration(Matrix &a, int maxIterations, vector<double> &y) {
     // supongo que y esta bien elegido (si es random hay menos chances de que no converga la funcion)
     double res = 0;
+
+    if (printEigenvalues) cout << "Calculando : " << endl;
     for (int i = 0; i < maxIterations; i++) {
         y = a * y;
         normalize(y); // normaliza por la norma euclida
+        auto aux = a * y;
+        res = dot_product(y, aux) / dot_product(y, y);
+        if (printEigenvalues) cout << res << endl;
     }
-    auto aux = a * y;
-    res = dot_product(y, aux) / dot_product(y, y);
+
     return res;
 }
 
@@ -112,7 +120,7 @@ Matrix deflation(Matrix const &a, int k) {
     Matrix b = a;
     for (int i = 0; i < k; ++i) {
         vector<double> y = randomVector(a.n);
-        dominant_eigenvalue = powerIteration(b, 1000, y);
+        dominant_eigenvalue = powerIteration(b, maxIterations, y);
         eigenvectors[i] = y; // Guardo el autovector asociado al i-esimo autovalor
         Matrix aux = transposedProduct(y);
         aux = dominant_eigenvalue * aux;
@@ -139,14 +147,16 @@ PCA::PCA(Matrix &a, int alpha) {
     Matrix transposed = x.transpose();
 
     // Transformo los autovectores de X * X^t a  los de la covarianza
-    v =  Matrix(alpha, a.m);
+    v = Matrix(alpha, a.m);
     for (int i = 0; i < alpha; ++i) {
         v[i] = transposed * eigenvectors[i];
     }
 
     //ESTE CODIGO VA EN UN IF de un param
-    for (int i= 0; i< v.n; i++) {
-        save_img_from_vec( "autovect" + to_string(i) + ".pgm", v[i]);
+    if (saveEigenvector) {
+        for (int i = 0; i < v.n; i++) {
+            save_img_from_vec("autovect" + to_string(i) + ".pgm", v[i]);
+        }
     }
     fitMatrix = a.transpose();
     fitMatrix = v * fitMatrix; // Ya esta transpuesto la matrix de las alpha componentes principales

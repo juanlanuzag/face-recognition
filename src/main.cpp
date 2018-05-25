@@ -25,6 +25,9 @@ int knn_k = 1;
 int alpha = 1;
 int n_folds = 0;
 bool strat = true;
+extern int maxIterations;
+extern bool printEigenvalues;
+extern bool saveEigenvector;
 
 int main(int argc, char *argv[]){
 	// ./main -m 1 -i train.csv -q test.csv -o result.csv
@@ -43,7 +46,15 @@ int main(int argc, char *argv[]){
 			knn_k = atoi(argv[i+1]);
 		}  else if(strcmp(argv[i], "-alpha") == 0) {
 			alpha = atoi(argv[i+1]);
-		} else if(strcmp(argv[i], "-k-folds") == 0) {
+		}  else if(strcmp(argv[i], "-max-it") == 0) {
+			maxIterations = atoi(argv[i+1]);
+		}  else if(strcmp(argv[i], "--autoval") == 0) {
+            // imprime los autovalores en cada iteracion del metodo de potencias
+            printEigenvalues = true;
+        }  else if(strcmp(argv[i], "--autoimg") == 0) {
+            // Guarda los Autovectores como imagenes
+            saveEigenvector = true;
+        } else if(strcmp(argv[i], "-k-folds") == 0) {
 			n_folds = atoi(argv[i+1]);
 		} else if (strcmp(argv[i], "-strat") == 0){
 			strat = atoi(argv[i+1]);
