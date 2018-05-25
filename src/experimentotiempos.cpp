@@ -101,60 +101,33 @@ int main(int argc, char *argv[]){
 
 	} else if (method == 1) {
 		// PCA + KNN
+		double totalTimePCA = 0;
+		// for (int t = 0; t < 10; t++) {
+        //     auto start = std::chrono::high_resolution_clock::now();
+		//
+		// 	PCA pca(train.data, alpha);
+		//
+		// 	auto end = std::chrono::high_resolution_clock::now();
+        //     auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+        //     totalTimePCA += elapsed.count();
+        // }
 		PCA pca(train.data, alpha);
 		KNN knn(pca.fitMatrix, train.tags, knn_k); // Aca entrena
-		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		for (unsigned int i=0; i < test_imgs.size(); i++) {
-	            auto v = pca.tc(test_imgs[i]);
-        	    fs << knn.predict(v) << "," << endl;
-		}
-		fs.close();
-	} else if (method == 2) {
-		Dataset t,v;
 
-		XVal split = XVal(train, n_folds, true, true);
+		double totalTimePredict = 0;
+		for (int t = 0; t < 10; t++) {
+            auto start = std::chrono::high_resolution_clock::now();
 
-		int iteration = 0;
-
-		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		fs << "method,train_set,knn-k,k-folds,test_fold,acccuracy" << endl;
-
-		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
-		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl;
-
-		while(split.generate_data(t, v)){
-			KNN knn(t.data, t.tags, knn_k);
-			ConfusionM c = knn.score(v.data, v.tags);
-			fs2 << c << endl;
-			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << iteration++ << "," << c.accuracy() << endl;
-		}
-	} else if (method == 3){
-		Dataset t,v;
-		XVal split = XVal(train, n_folds, true, true);
-
-		int iteration = 0;
-
-		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		fs << "method,train_set,knn-k,k-folds,alpha,test_fold,acccuracy" << endl;
-
-		fstream fs2(clasif_path+".conf", fstream::in | fstream::out | fstream::trunc);
-		fs2 << *max_element(train.tags.begin(), train.tags.end()) << " " << n_folds << endl;
-
-		while(split.generate_data(t, v)){
-			PCA pca(t.data, alpha);
-			KNN knn(pca.fitMatrix, t.tags, knn_k);
-
-			Matrix transformed_v_data;
-			for(unsigned int i = 0; i < v.data.n; i++){
-				auto vec = pca.tc(v.data[i]);
-				transformed_v_data.push_row(vec);
+			for (unsigned int i=0; i < test_imgs.size(); i++) {
+				auto v = pca.tc(test_imgs[i]);
+				knn.predict(v);
 			}
-			ConfusionM c = knn.score(transformed_v_data, v.tags);
 
-			fs2 << c << endl;
-			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << alpha << "," << iteration++ << "," << c.accuracy() << endl;
-		}
-
+			auto end = std::chrono::high_resolution_clock::now();
+            auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+            totalTimePredict += elapsed.count();
+        }
+		cout << totalTimePCA/ 10 <<","<<totalTimePredict/ 10 << endl;
 	}
 	return 0;
 }

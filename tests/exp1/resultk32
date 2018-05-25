@@ -1,0 +1,6 @@
+method,train_set,knn-k,k-folds,test_fold,acccuracy
+2,../tests/catedra/testFullBig.in,32,5,0,0.682927
+2,../tests/catedra/testFullBig.in,32,5,1,0.695122
+2,../tests/catedra/testFullBig.in,32,5,2,0.670732
+2,../tests/catedra/testFullBig.in,32,5,3,0.719512
+2,../tests/catedra/testFullBig.in,32,5,4,0.719512
