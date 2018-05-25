@@ -62,6 +62,7 @@ void XVal::get_folds(){
 			if(r > 0){
 				fold.push_back(idxs[i]);
 				i++;
+				r--;
 			}
 
 			this->folds.push_back(fold);
