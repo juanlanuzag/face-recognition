@@ -44,14 +44,15 @@ vector<string> dataset_test_file_to_vector(string filename) {
 }
 
 
-void data_map_split(unordered_map<string, unsigned int>& mapa, Matrix& matrix, vector<int>& clasif) {
+void data_map_split(unordered_map<string, unsigned int>& mapa, Matrix& matrix, vector<int>& clasif, vector<string>& vs) {
     for(auto it = mapa.begin(); it != mapa.end(); it++) {
         string filename = it->first;
-		PGMImage img;
-		img.load(filename);
+        vs.push_back(filename);
+    		PGMImage img;
+    		img.load(filename);
 
-		matrix.push_row(img.data_to_vec());
-		clasif.push_back((int) it->second);
+    		matrix.push_row(img.data_to_vec());
+    		clasif.push_back((int) it->second);
     }
 	assert(matrix.n == (int) clasif.size());
 }

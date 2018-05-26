@@ -16,6 +16,6 @@ vector<string> dataset_test_file_to_vector(string filename);
 
 vector<string> get_files(string filename);
 
-void data_map_split(unordered_map<string, unsigned int>& map, Matrix& matrix, vector<int>& clasif);
+void data_map_split(unordered_map<string, unsigned int>& map, Matrix& matrix, vector<int>& clasif, vector<string>& vs);
 
 #endif //FILE_HELPERS_H
