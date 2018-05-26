@@ -47,7 +47,7 @@ def testdf_to_csv(df, pathtest, pathexpected):
     with open(pathtest, 'w') as archivo:
         for key, col in df.iteritems():
             for index, elem in col.iteritems():
-                archivo.write(elem + ',\n')
+                archivo.write(elem + ', ' + colname_to_int(key) + ',\n')
     with open(pathexpected, 'w') as archivo:
         for key, col in df.iteritems():
             for index, elem in col.iteritems():
