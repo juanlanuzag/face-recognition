@@ -86,10 +86,8 @@ int main(int argc, char *argv[]){
 	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN MAP *********/
 	unordered_map<string, unsigned int> train_set = dataset_train_file_to_map(train_set_path);
 	/********* PASO IMAGENES DE ENTRENAMIENTO A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
-
-	vector<string>tmp;
 	Dataset train;
-	data_map_split(train_set, train.data, train.tags, tmp);
+	data_map_split(train_set, train.data, train.tags);
 
 	Dataset val;
 	vector<string> test_set;
@@ -97,7 +95,7 @@ int main(int argc, char *argv[]){
 
 	if(method==0 || method==1){
 			unordered_map<string, unsigned int> val_set = dataset_train_file_to_map(test_set_path);
-			data_map_split(val_set, val.data, val.tags, test_set);
+			data_map_split(val_set, val.data, val.tags);
 	} else {
 		/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN VECTOR *********/
 		test_set = dataset_test_file_to_vector(test_set_path);
@@ -117,8 +115,8 @@ int main(int argc, char *argv[]){
 		vector<string> files = get_files(test_set_path);
 
 
-		for (unsigned int i=0; i < test_set.size(); i++) {
-			fs << test_set[i] << ", " << knn.predict(val.data[i]) << "," << endl;
+		for (unsigned int i=0; i < files.size(); i++) {
+			fs << files[i] << ", " << knn.predict(val.data[i]) << "," << endl;
 		}
 
 		ConfusionM c = knn.score(val.data, val.tags);
@@ -140,9 +138,9 @@ int main(int argc, char *argv[]){
 		KNN knn(pca.fitMatrix, train.tags, knn_k); // Aca entrena
 
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		for (unsigned int i=0; i < test_set.size(); i++) {
+		for (unsigned int i=0; i < files.size(); i++) {
     		auto v = pca.tc(val.data[i]);
-				fs << test_set[i] << ", " << knn.predict(v) << "," << endl;
+				fs << files[i] << ", " << knn.predict(v) << "," << endl;
 		}
 
 		fs.close();
