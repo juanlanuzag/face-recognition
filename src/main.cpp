@@ -94,8 +94,8 @@ int main(int argc, char *argv[]){
 	vector<vector<double> > test_imgs;
 
 	if(method==0 || method==1){
-			unordered_map<string, unsigned int> val_set = dataset_train_file_to_map(test_set_path);
-			data_map_split(val_set, val.data, val.tags);
+			vector<std::pair<string, unsigned int> > val_set = dataset_test_file_to_pairvec(test_set_path);
+			data_pairvec_split(val_set, val.data, val.tags);
 	} else {
 		/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN VECTOR *********/
 		test_set = dataset_test_file_to_vector(test_set_path);
