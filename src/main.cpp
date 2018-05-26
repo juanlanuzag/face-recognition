@@ -21,8 +21,8 @@ int method = -1; //0: kNN, 1: PCA + kNN
 string train_set_path = "";
 string test_set_path = "";
 string clasif_path = "";
-int knn_k = 1;
-int alpha = 1;
+int knn_k = 3;
+int alpha = 17;
 int n_folds = 0;
 bool strat = true;
 extern int maxIterations;
@@ -60,12 +60,12 @@ int main(int argc, char *argv[]){
 			strat = atoi(argv[i+1]);
 		} else if(strcmp(argv[i], "--help") == 0) {
 			cout << "Parametros para correr el comando ./main :" << endl;
-			cout << "-m  Method (0: knn solo)" << endl;
+			cout << "-m  Method (0: knn solo, 1: knn + pca)" << endl;
 			cout << "-i  Path al archivo con el train_set" << endl;
 			cout << "-q  Path al archivo con el test_set" << endl;
 			cout << "-o  Path del archivo de salida con la clasificacion de los datos de test_set" << endl;
-			cout << "-knn-k indica el k a usar en knn (default 1)" << endl;
-			cout << "-alpha indica el alpha a usar en pca (default 1)" << endl;
+			cout << "-knn-k indica el k a usar en knn (default 3)" << endl;
+			cout << "-alpha indica el alpha a usar en pca (default 17)" << endl;
 			cout << "-k-folds indica la cantidad de folds que se usan para cross validation (default no se usa xval)" << endl;
 			return 0;
 		}
@@ -89,38 +89,71 @@ int main(int argc, char *argv[]){
 	Dataset train;
 	data_map_split(train_set, train.data, train.tags);
 
-	/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN VECTOR *********/
-	vector<string> test_set = dataset_test_file_to_vector(test_set_path);
-	/********* PASO IMAGENES DE TEST A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
+	Dataset val;
+	vector<string> test_set;
 	vector<vector<double> > test_imgs;
-	for (unsigned int i=0; i < test_set.size(); i++) {
-		test_imgs.push_back(imgvec_from_filepath(test_set[i]));
+
+	if(method==0 || method==1){
+			unordered_map<string, unsigned int> val_set = dataset_train_file_to_map(test_set_path);
+			data_map_split(val_set, val.data, val.tags);
+	} else {
+		/********* LEO ARCHIVO PASADO POR INPUT Y LO CARGO EN VECTOR *********/
+		test_set = dataset_test_file_to_vector(test_set_path);
+		/********* PASO IMAGENES DE TEST A UNA MATRIZ Y RESULTADOS A UN VECTOR *********/
+		for (unsigned int i=0; i < test_set.size(); i++) {
+			test_imgs.push_back(imgvec_from_filepath(test_set[i]));
+		}
 	}
 
 	if (method == 0) {
 		// KNN solo
 		KNN knn(train.data, train.tags, knn_k); // Aca entrena
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		auto start = std::chrono::high_resolution_clock::now();
+
+		// auto start = std::chrono::high_resolution_clock::now();
+
+		vector<string> files = get_files(test_set_path);
 
 
-		for (unsigned int i=0; i < test_imgs.size(); i++) {
-			fs << knn.predict(test_imgs[i]) << "," << endl;
+		for (unsigned int i=0; i < files.size(); i++) {
+			fs << files[i] << ", " << knn.predict(val.data[i]) << "," << endl;
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
-		cout << knn_k << ", " << elapsed.count() << endl;
+
+		ConfusionM c = knn.score(val.data, val.tags);
+
+		cout << "method,train_set,val_set,knn-k,accuracy" << endl;
+		cout << method << "," << train_set_path << "," << test_set_path << "," << knn_k  << "," << c.accuracy() << "," << endl;
+
+		// auto end = std::chrono::high_resolution_clock::now();
+		// auto elapsed = std::chrono::duration_cast<chrono::duration<double>>(end - start);
+		// cout << knn_k << ", " << elapsed.count() << endl;
+
 		fs.close();
+
 	} else if (method == 1) {
+		vector<string> files = get_files(test_set_path);
+
 		// PCA + KNN
 		PCA pca(train.data, alpha);
 		KNN knn(pca.fitMatrix, train.tags, knn_k); // Aca entrena
+
 		fstream fs(clasif_path, fstream::in | fstream::out | fstream::trunc);
-		for (unsigned int i=0; i < test_imgs.size(); i++) {
-	            auto v = pca.tc(test_imgs[i]);
-        	    fs << knn.predict(v) << "," << endl;
+		for (unsigned int i=0; i < files.size(); i++) {
+    		auto v = pca.tc(val.data[i]);
+				fs << files[i] << ", " << knn.predict(v) << "," << endl;
 		}
+
 		fs.close();
+		Matrix transformed_v_data;
+		for(unsigned int i = 0; i < val.data.n; i++){
+			auto vec = pca.tc(val.data[i]);
+			transformed_v_data.push_row(vec);
+		}
+		ConfusionM c = knn.score(transformed_v_data, val.tags);
+
+		cout << "method,train_set,val_set,knn-k,alpha,accuracy" << endl;
+		cout << method << "," << train_set_path << "," << test_set_path << "," << knn_k << "," << alpha << "," << c.accuracy() << "," << endl;
+
 	} else if (method == 2) {
 		Dataset t,v;
 
@@ -140,7 +173,7 @@ int main(int argc, char *argv[]){
 			fs2 << c << endl;
 			fs << method << "," << train_set_path << "," << knn_k << "," << n_folds << "," << iteration++ << "," << c.accuracy() << endl;
 		}
-	} else if (method == 3){
+	} else if (method == 3) {
 		Dataset t,v;
 		XVal split = XVal(train, n_folds, true, strat);
 

@@ -55,3 +55,18 @@ void data_map_split(unordered_map<string, unsigned int>& mapa, Matrix& matrix, v
     }
 	assert(matrix.n == (int) clasif.size());
 }
+
+vector<string> get_files(string filename){
+  vector<string> files;
+  std::fstream fs; fs.open(filename);
+  while(true) {
+      string file;
+      fs >> file;
+      if(!fs.good()){
+        break;
+      }
+      files.push_back(file.substr(0, file.size()-1));
+      fs >> file; //tira el resto de la fila
+  }
+  return files;
+}
